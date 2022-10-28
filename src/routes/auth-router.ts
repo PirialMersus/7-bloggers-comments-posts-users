@@ -5,6 +5,7 @@ import {bearerAuthMiddleware} from "../middlewares/authMiddleware";
 import {UsersController} from "../controllers/users-controller";
 import {body} from "express-validator";
 import {inputValidatorMiddleware} from "../middlewares/input-validator-middleware";
+import {limiter} from "../middlewares/rate-limiter";
 
 export const authRouter = Router({})
 
@@ -13,11 +14,14 @@ const authController = container.resolve(AuthController)
 const usersController = container.resolve(UsersController)
 authRouter
     .post('/registration-confirmation',
+        limiter,
         authController.registerConfirm
     )
-    .post('/registration-confirmation',
+    .post('/registration-email-resending',
+        limiter,
         authController.registerConfirm
     )
+
     .post('/registration',
         body('login').trim().not().isEmpty().withMessage('enter input value in name field'),
         body('password').trim().not().isEmpty().withMessage('enter input value in password field'),
@@ -33,9 +37,13 @@ authRouter
             return true;
         }),
         inputValidatorMiddleware,
+        limiter,
         authController.createUser
     )
     .post('/login',
+        body('login').trim().not().isEmpty().withMessage('enter input value in name field'),
+        body('password').trim().not().isEmpty().withMessage('enter input value in password field'),
+        limiter,
         authController.checkCredentials
     )
     .post('/confirm-email',

@@ -73,4 +73,10 @@ export class UsersRepository {
         const result: { modifiedCount: number } = await UsersModel.updateOne({_id}, {$set: {'emailConfirmation.isConfirmed': true}})
         return result.modifiedCount === 1
     }
+    async addRefreshAndAccessTokensToUser(_id: ObjectId, accessToken: string, refreshToken: string): Promise<Boolean> {
+        let result: { matchedCount: number } = await UsersModel.updateOne({_id}, {
+            $set: {'accountData.accessToken': accessToken, 'accountData.refreshToken': refreshToken,}
+        })
+        return result.matchedCount === 1
+    }
 }

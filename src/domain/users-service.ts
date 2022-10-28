@@ -8,6 +8,8 @@ import {AccountDataType, IUser} from "../types/types";
 import {emailAdapter} from "../adapters/email-adapter";
 import {ObjectId} from "mongodb";
 import {jwtService} from "../application/jwtService";
+import jwt from "jsonwebtoken";
+import {settings} from "../settings/settings";
 
 @injectable()
 export class UsersService {
@@ -77,7 +79,7 @@ export class UsersService {
         const user = await this.usersRepository.findUserByConfirmationCode(code)
         if (!user) return false
         if (user.emailConfirmation.confirmationCode) return false
-        if (user.emailConfirmation.confirmationCode !== code ) return false
+        if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
 
         return this.usersRepository.deleteUser(user._id)
@@ -87,13 +89,17 @@ export class UsersService {
         return this.usersRepository.deleteUser(id)
     }
 
-    async checkCredentials(login: string, password: string): Promise<IUser | null> {
+    async checkCredentials(login: string, password: string): Promise<{accessToken: string, refreshToken: string} | null> {
         const user: IUser | null = await this.usersRepository.findUser(login)
         if (!user) return null
-        const passwordHash = await jwtService.generateHash(password, user.accountData.passwordHash)
-        if (user.accountData.passwordHash === passwordHash) {
-            return user
-        } else return null
+        const passwordHash = await jwtService.generateHash(password, user.accountData.passwordSalt)
+        if (user.accountData.passwordHash !== passwordHash) return null
+
+        const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10s'})
+        const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20s'})
+        if ( await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken))
+        return {accessToken, refreshToken}
+        return null
     }
 }
 

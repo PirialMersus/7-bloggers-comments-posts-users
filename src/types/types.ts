@@ -36,6 +36,8 @@ export type AccountDataType = {
     createdAt: string,
     passwordSalt: string,
     passwordHash: string,
+    accessToken: string,
+    refreshToken: string,
 }
 export type EmailConfirmationType = {
     confirmationCode: string,

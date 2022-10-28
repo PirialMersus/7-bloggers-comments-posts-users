@@ -2,7 +2,6 @@ import {injectable} from "inversify";
 import {UsersService} from "../domain/users-service";
 import {Request, Response} from "express";
 import {errorObj} from "../middlewares/input-validator-middleware";
-import {jwtService} from "../application/jwtService";
 
 @injectable()
 export class AuthController {
@@ -10,12 +9,11 @@ export class AuthController {
     }
 
     checkCredentials = async (req: Request, res: Response) => {
-        const user = await this.usersService.checkCredentials(req.body.login, req.body.password)
+        const result = await this.usersService.checkCredentials(req.body.login, req.body.password)
 
-        if (user) {
-            const token = await jwtService.createJWT(user)
+        if (result) {
             res.status(200).send({
-                "accessToken": token
+                "accessToken": result.accessToken
             })
         } else {
             errorObj.errorsMessages = [{
@@ -46,8 +44,8 @@ export class AuthController {
             res.sendStatus(400)
         }
     }
-    registerConfirm = async (req: Request, res: Response) => {
-        const code = req.body.code
+    registerConfirm = async (_req: Request, _res: Response) => {
+        // const code = req.body.code
     }
 
     // async getUserInformation(req: Request, res: Response) {

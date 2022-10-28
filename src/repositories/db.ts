@@ -99,6 +99,8 @@ export class User implements IUser {
             createdAt: date.toISOString(),
             passwordSalt,
             passwordHash,
+            accessToken: '',
+            refreshToken: '',
         }
         this.emailConfirmation = {
             confirmationCode: uuidv4(),
@@ -142,6 +144,8 @@ const usersSchema = new mongoose.Schema<IUser>({
         createdAt: String,
         passwordSalt: String,
         passwordHash: String,
+        accessToken: String,
+        refreshToken: String,
     },
     emailConfirmation: {
         confirmationCode: String,
