@@ -55,7 +55,7 @@ export class UsersService {
         }
     }
 
-    async createUser(login: string, password: string, email: string, isConfirmed: boolean = false): Promise<IUser | null> {
+    async createUser(login: string, email: string, password: string, isConfirmed: boolean = false): Promise<IUser | null> {
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await jwtService.generateHash(password, passwordSalt)
         const date = new Date()
@@ -64,11 +64,13 @@ export class UsersService {
         const accessToken = await jwtService.createJWT(newUser)
 
         const createdUser = await this.usersRepository.createUser(newUser)
+        console.log('createdUser', createdUser)
         try {
             await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', accessToken)
         } catch (error) {
             console.error(error)
             await this.usersRepository.deleteUser(newUser._id)
+            console.log('errrrrrrrrrrrrrrrrrrrrrrrrr')
             return null
         }
 
@@ -89,7 +91,7 @@ export class UsersService {
         return this.usersRepository.deleteUser(id)
     }
 
-    async checkCredentials(login: string, password: string): Promise<{accessToken: string, refreshToken: string} | null> {
+    async checkCredentials(login: string, password: string): Promise<{ accessToken: string, refreshToken: string } | null> {
         const user: IUser | null = await this.usersRepository.findUser(login)
         if (!user) return null
         const passwordHash = await jwtService.generateHash(password, user.accountData.passwordSalt)
@@ -97,8 +99,8 @@ export class UsersService {
 
         const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10s'})
         const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20s'})
-        if ( await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken))
-        return {accessToken, refreshToken}
+        if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken))
+            return {accessToken, refreshToken}
         return null
     }
 }
