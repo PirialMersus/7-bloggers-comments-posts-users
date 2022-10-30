@@ -5,6 +5,7 @@ import {bearerAuthMiddleware} from "../middlewares/authMiddleware";
 import {UsersController} from "../controllers/users-controller";
 import {body} from "express-validator";
 import {inputValidatorMiddleware} from "../middlewares/input-validator-middleware";
+import {UsersRepository} from "../repositories/users-repository";
 // import {limiter} from "../middlewares/rate-limiter";
 
 export const authRouter = Router({})
@@ -12,6 +13,7 @@ export const authRouter = Router({})
 
 const authController = container.resolve(AuthController)
 const usersController = container.resolve(UsersController)
+const usersRepository = container.resolve(UsersRepository)
 authRouter
     .post('/registration-confirmation',
         // limiter,
@@ -29,10 +31,21 @@ authRouter
         body('password').isLength({min: 6, max: 20}).withMessage('password: min: 6, max: 20'),
         body('email').trim().not().isEmpty().withMessage('enter input value in email field'),
         body('email').isLength({max: 100}).withMessage('email length should be less then 100'),
-        body('email').custom((value, {req}) => {
+        body('email').custom(async (value, {req}) => {
             const regExp = new RegExp("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
             if (!regExp.test(req.body.email)) {
-                throw new Error('enter correct value to email field  123');
+                throw new Error('enter correct value to email field');
+            }
+            const foundUserByEmail = await usersRepository.findUserByEmail(value)
+            if (foundUserByEmail) {
+                throw new Error('User with such email is exist');
+            }
+            return true;
+        }),
+        body('login').custom(async (value) => {
+            const foundUserByLogin = await usersRepository.findUserByLogin(value)
+            if (foundUserByLogin) {
+                throw new Error('User with such login is exist');
             }
             return true;
         }),
