@@ -60,6 +60,9 @@ export class UsersService {
         const passwordHash = await jwtService.generateHash(password, passwordSalt)
         const date = new Date()
 
+        const foundUserByLogin = await this.usersRepository.findUserByLogin(login)
+        const foundUserByEmail = await this.usersRepository.findUserByEmail(email)
+        if (foundUserByLogin || foundUserByEmail) return null
         const newUser: User = User.create(login, email, passwordSalt, passwordHash, date, isConfirmed)
         const accessToken = await jwtService.createJWT(newUser)
 
@@ -70,7 +73,6 @@ export class UsersService {
         } catch (error) {
             console.error(error)
             await this.usersRepository.deleteUser(newUser._id)
-            console.log('errrrrrrrrrrrrrrrrrrrrrrrrr')
             return null
         }
 

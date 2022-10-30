@@ -48,6 +48,22 @@ export class UsersRepository {
             return null
         }
     }
+    async findUserByEmail(email: string): Promise<IUser | null> {
+        let user = UsersModel.findOne({'accountData.email': email}).select({_id: 0, __v: 0})
+        if (user) {
+            return user
+        } else {
+            return null
+        }
+    }
+    async findUserByLogin(login: string): Promise<IUser | null> {
+        let user = UsersModel.findOne({'accountData.login': login}).select({_id: 0, __v: 0})
+        if (user) {
+            return user
+        } else {
+            return null
+        }
+    }
 
     async createUser(newUser: IUser): Promise<IUser | null> {
         await UsersModel.insertMany([newUser])
