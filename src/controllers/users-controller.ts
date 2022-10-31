@@ -41,7 +41,7 @@ export class UsersController {
     }
 
     async createUser(req: Request, res: Response) {
-        const newUser = await this.usersService.createUser(req.body.login, req.body.password, req.body.email)
+        const newUser = await this.usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (newUser) {
             res.status(201).send(newUser)
         } else {

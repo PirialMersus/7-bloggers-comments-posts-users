@@ -63,13 +63,14 @@ export class UsersService {
         const newUser: User = User.create(login, email, passwordSalt, passwordHash, date, isConfirmed)
         const accessToken = await jwtService.createJWT(newUser)
         newUser.accountData.accessToken = accessToken
-
         const createdUser = await this.usersRepository.createUser(newUser)
+
         // console.log('createdUser', createdUser)
         try {
+            console.log('email', email)
             await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', accessToken)
         } catch (error) {
-            console.error(error)
+            console.error(error, 'sssssssssssssssssssssssss')
             await this.usersRepository.deleteUser(newUser._id)
             return null
         }
