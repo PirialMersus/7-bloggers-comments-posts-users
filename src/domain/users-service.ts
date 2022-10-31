@@ -84,7 +84,7 @@ export class UsersService {
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
 
-        return this.usersRepository.deleteUser(user._id)
+        return true
     }
 
     async deleteUser(id: ObjectId): Promise<boolean> {
@@ -103,10 +103,12 @@ export class UsersService {
             return {accessToken, refreshToken}
         return null
     }
-    async findUserByEmail(email: string,): Promise<IUser | null>{
+
+    async findUserByEmail(email: string,): Promise<IUser | null> {
         return this.usersRepository.findUserByEmail(email)
     }
-    async registerEmailResending(email: string,): Promise<boolean>{
+
+    async registerEmailResending(email: string,): Promise<boolean> {
         const user = await this.usersRepository.findUserByEmail(email)
         if (!user) return false
         try {
@@ -117,6 +119,14 @@ export class UsersService {
             return false
         }
         return true
+    }
+
+    async registerConfirm(code: string,): Promise<boolean> {
+        const user = await this.usersRepository.findUserByConfirmationCode(code)
+        if (!user) return false
+        if (user.emailConfirmation.confirmationCode) return false
+        if (user.emailConfirmation.confirmationCode !== code) return false
+        return user.emailConfirmation.expirationDate >= new Date();
     }
 }
 

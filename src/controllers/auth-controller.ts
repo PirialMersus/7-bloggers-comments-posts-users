@@ -44,8 +44,13 @@ export class AuthController {
             res.sendStatus(400)
         }
     }
-    registerConfirm = async (req: Request, _res: Response) => {
-        const email = req.body.email
+    registerConfirm = async (req: Request, res: Response) => {
+        const isConfirmed = await this.usersService.registerConfirm(req.body.code)
+        if (isConfirmed) {
+            res.sendStatus(204)
+        } else {
+            res.sendStatus(400)
+        }
     }
     registerEmailResending = async (req: Request, _res: Response) => {
         const user = await this.usersService.registerEmailResending(req.body.email)

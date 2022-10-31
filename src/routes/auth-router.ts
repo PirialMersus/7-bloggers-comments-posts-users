@@ -16,7 +16,9 @@ const usersController = container.resolve(UsersController)
 const usersRepository = container.resolve(UsersRepository)
 authRouter
     .post('/registration-confirmation',
+        body('code').trim().not().isEmpty().withMessage('enter input value in code field'),
         // limiter,
+        inputValidatorMiddleware,
         authController.registerConfirm
     )
     .post('/registration-email-resending',
