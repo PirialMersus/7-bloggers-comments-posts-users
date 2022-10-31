@@ -10,7 +10,6 @@ export class AuthController {
 
     checkCredentials = async (req: Request, res: Response) => {
         const result = await this.usersService.checkCredentials(req.body.login, req.body.password)
-        console.log('result', result)
         if (result) {
             res.status(200).send({
                 "accessToken": result.accessToken
@@ -25,7 +24,6 @@ export class AuthController {
     }
     confirmEmail = async (req: Request, res: Response) => {
         const result = await this.usersService.confirmEmail(req.body.code)
-        console.log('result', result)
         if (result) {
             res.sendStatus(201)
         } else {

@@ -32,9 +32,6 @@ export class UsersController {
 
     getUser = async (req: Request, res: Response) => {
         const user = await this.usersService.findUserByIdSomeDataReturn(req.user!._id)
-        if (req.user) {
-            console.log('req.user._id', req.user._id)
-        }
 
         if (user) {
             res.status(200).send(user)

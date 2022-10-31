@@ -41,6 +41,8 @@ export class CommentsController {
 
     async deleteComment(req: Request, res: Response) {
         const id = req.params.id;
+        console.log('id', id)
+        console.log('ObjectId.createFromHexString(id)', ObjectId.createFromHexString(id))
         const isDeleted: boolean | 'notMyComment' = await this.commentsService.deleteComment(ObjectId.createFromHexString(id), req.user?._id)
 
         if (isDeleted) {

@@ -40,7 +40,7 @@ export class CommentsRepository {
 
     async createComment(comment: IComment): Promise<IComment | null> {
         await CommentsModel.insertMany([comment])
-        return CommentsModel.findOne({id: comment.id}).select({_id: 0, __v: 0, postId: 0})
+        return CommentsModel.findOne({_id: comment._id}).select({_id: 0, __v: 0, postId: 0})
     }
 
     async updateComment(_id: ObjectId, content: string): Promise<boolean> {

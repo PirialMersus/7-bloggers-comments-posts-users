@@ -56,7 +56,6 @@ export interface IComment {
     createdAt: string,
     userLogin: string,
     postId: string,
-    id: string
 }
 
 export interface IPassword {

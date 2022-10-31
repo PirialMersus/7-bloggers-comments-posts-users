@@ -21,7 +21,6 @@ export class Blog implements IBlog {
 
 export class Comment implements IComment {
     createdAt: string
-    id: string
     _id: ObjectId
 
     private constructor(public content: string,
@@ -30,7 +29,6 @@ export class Comment implements IComment {
                         public postId: string,
                         date: Date) {
         this.createdAt = date.toISOString()
-        this.id = (+date).toString()
         this._id = new ObjectId()
     }
 
@@ -180,7 +178,6 @@ const commentsSchema = new mongoose.Schema<IComment>({
     content: String,
     userLogin: String,
     postId: String,
-    id: String,
     createdAt: String
 });
 export const CommentsModel = mongoose.model('comments', commentsSchema)

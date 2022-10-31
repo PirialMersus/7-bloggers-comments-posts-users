@@ -24,8 +24,6 @@ export const serializedCommentsSortBy = (value: string) => {
             return 'userId';
         case 'userLogin':
             return 'userLogin'
-        case 'id':
-            return 'id'
         case '_id':
             return '_id'
         default:
