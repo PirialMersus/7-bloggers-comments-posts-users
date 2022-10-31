@@ -104,7 +104,7 @@ export class User implements IUser {
         }
         this.emailConfirmation = {
             confirmationCode: uuidv4(),
-            expirationDate: add(date, {hours: 1, minutes: 3}),
+            expirationDate: add(date, {hours: 10, minutes: 3}),
             isConfirmed: isConfirmed,
         }
     }

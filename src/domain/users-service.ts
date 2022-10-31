@@ -79,11 +79,11 @@ export class UsersService {
 
     async confirmEmail(code: string): Promise<boolean> {
         const user = await this.usersRepository.findUserByConfirmationCode(code)
+
         if (!user) return false
         if (user.emailConfirmation.confirmationCode) return false
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
-
         return true
     }
 
@@ -123,8 +123,9 @@ export class UsersService {
 
     async registerConfirm(code: string,): Promise<boolean> {
         const user = await this.usersRepository.findUserByConfirmationCode(code)
+
         if (!user) return false
-        if (user.emailConfirmation.confirmationCode) return false
+        if (user.emailConfirmation.isConfirmed) return false
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
         return this.usersRepository.confirmUser(code)

@@ -48,6 +48,7 @@ export class UsersRepository {
             return null
         }
     }
+
     async findUserByEmail(email: string): Promise<IUser | null> {
         let user = UsersModel.findOne({'accountData.email': email}).select({_id: 0, __v: 0})
         if (user) {
@@ -56,6 +57,7 @@ export class UsersRepository {
             return null
         }
     }
+
     async findUserByLogin(login: string): Promise<IUser | null> {
         let user = UsersModel.findOne({'accountData.login': login}).select({_id: 0, __v: 0})
         if (user) {
@@ -84,10 +86,11 @@ export class UsersRepository {
         const user = await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
         return user
     }
+
     async confirmUser(code: string): Promise<boolean> {
         const result: { matchedCount: number } = await UsersModel.updateOne({'emailConfirmation.confirmationCode': code},
             {
-                $set: {'accountData.isConfirmed': true}
+                $set: {'emailConfirmation.isConfirmed': true}
             })
         return result.matchedCount === 1
     }
@@ -96,6 +99,7 @@ export class UsersRepository {
         const result: { modifiedCount: number } = await UsersModel.updateOne({_id}, {$set: {'emailConfirmation.isConfirmed': true}})
         return result.modifiedCount === 1
     }
+
     async addRefreshAndAccessTokensToUser(_id: ObjectId, accessToken: string, refreshToken: string): Promise<Boolean> {
         let result: { matchedCount: number } = await UsersModel.updateOne({_id}, {
             $set: {'accountData.accessToken': accessToken, 'accountData.refreshToken': refreshToken,}
