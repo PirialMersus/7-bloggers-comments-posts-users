@@ -11,6 +11,8 @@ export class CommentsController {
 
     async getComment(req: Request, res: Response) {
         const id = req.params.id;
+        console.log('id', id)
+        console.log('ObjectId.createFromHexString(id)', ObjectId.createFromHexString(id))
         const comment = await this.commentsService.findCommentById(ObjectId.createFromHexString(id))
         if (comment) {
             res.status(200).send(comment)

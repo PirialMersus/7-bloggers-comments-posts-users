@@ -18,17 +18,17 @@ export interface IQuery {
 export interface IBlog {
     name: string,
     youtubeUrl: string,
-    id: string,
     createdAt: string
+    _id: ObjectId
 }
 export interface IPost {
-    id: string,
     blogId: string,
     title: string,
     shortDescription: string,
     content: string,
     blogName: string,
     createdAt: string
+    _id: ObjectId
 }
 export type AccountDataType = {
     login: string,
@@ -55,7 +55,7 @@ export interface IComment {
     userId: ObjectId,
     createdAt: string,
     userLogin: string,
-    postId: string,
+    postId: ObjectId,
 }
 
 export interface IPassword {

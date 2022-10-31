@@ -66,7 +66,7 @@ export class PostsRepository {
     // have to have return value type
     async createPost(newPost: IPost): Promise<IPost | null> {
         await PostsModel.insertMany([newPost])
-        return PostsModel.findOne({id: newPost.id}).select({_id: 0, __v: 0})
+        return PostsModel.findOne({_id: newPost._id}).select({_id: 0, __v: 0})
     }
 
     async updatePost(id: string,

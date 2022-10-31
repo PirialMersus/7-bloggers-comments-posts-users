@@ -42,8 +42,9 @@ export class CommentsService {
         const newComment: IComment = Comment.create(content,
             user._id,
             user.accountData.login,
-            post.id,
+            post._id,
             date);
+        console.log('newComment', newComment)
         return this.commentsRepository.createComment(newComment)
     }
 

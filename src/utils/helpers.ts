@@ -6,8 +6,8 @@ export const serializedPostsSortBy = (value: string) => {
             return 'title';
         case 'shortDescription':
             return 'shortDescription'
-        case 'id':
-            return 'id'
+        case '_id':
+            return '_id'
         case 'content':
             return 'content'
         case 'blogName':

@@ -37,8 +37,8 @@ export class BlogsRepository {
         })
     }
 
-    async findBlogById(id: string): Promise<IBlog | null> {
-        const blog = BlogsModel.findOne({id}).select({_id: 0, __v: 0})
+    async findBlogById(_id: string): Promise<IBlog | null> {
+        const blog = BlogsModel.findOne({_id}).select({_id: 0, __v: 0})
         if (blog) {
             return blog
         } else {
@@ -48,18 +48,18 @@ export class BlogsRepository {
 
     async createBlog(newBlog: IBlog): Promise<IBlog | null> {
         await BlogsModel.insertMany([newBlog])
-        return BlogsModel.findOne({id: newBlog.id}).select({_id: 0, __v: 0})
+        return BlogsModel.findOne({_id: newBlog._id}).select({_id: 0, __v: 0})
     }
 
     async updateBlog(id: string, name: string, youtubeUrl: string): Promise<boolean> {
-        let result: { matchedCount: number } = await BlogsModel.updateOne({id}, {
+        let result: { matchedCount: number } = await BlogsModel.updateOne({_id: id}, {
             $set: {name, youtubeUrl}
         })
         return result.matchedCount === 1
     }
 
     async deleteBlog(id: string): Promise<boolean> {
-        const result: { deletedCount: number } = await BlogsModel.deleteOne({id})
+        const result: { deletedCount: number } = await BlogsModel.deleteOne({_id: id})
         return result.deletedCount === 1
     }
 

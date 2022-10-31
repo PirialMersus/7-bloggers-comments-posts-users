@@ -7,11 +7,11 @@ import add from 'date-fns/add';
 
 export class Blog implements IBlog {
     createdAt: string
-    id: string
+    _id: ObjectId
 
     private constructor(public name: string, public youtubeUrl: string, date: Date) {
         this.createdAt = date.toISOString()
-        this.id = Math.random().toString(16)
+        this._id = new ObjectId()
     }
 
     static create = (name: string, youtubeUrl: string, date: Date) => {
@@ -26,7 +26,7 @@ export class Comment implements IComment {
     private constructor(public content: string,
                         public userId: ObjectId,
                         public userLogin: string,
-                        public postId: string,
+                        public postId: ObjectId,
                         date: Date) {
         this.createdAt = date.toISOString()
         this._id = new ObjectId()
@@ -35,7 +35,7 @@ export class Comment implements IComment {
     static create = (content: string,
                      userId: ObjectId,
                      userLogin: string,
-                     postId: string,
+                     postId: ObjectId,
                      date: Date) => {
         return new Comment(content, userId, userLogin, postId, date)
     }
@@ -44,7 +44,7 @@ export class Comment implements IComment {
 
 export class Post implements IPost {
     createdAt: string
-    id: string
+    _id: ObjectId
     blogName: string
     static date: Date
 
@@ -55,7 +55,7 @@ export class Post implements IPost {
                         possibleBlogName: string | undefined,
                         date: Date) {
         this.createdAt = date.toISOString()
-        this.id = (+date).toString()
+        this._id = new ObjectId()
         this.blogName = possibleBlogName ? possibleBlogName : ''
     }
 
@@ -156,13 +156,13 @@ export const UsersModel = mongoose.model('users', usersSchema)
 const blogsSchema = new mongoose.Schema<IBlog>({
     name: String,
     youtubeUrl: String,
-    id: String,
+    _id: String,
     createdAt: String
 });
 export const BlogsModel = mongoose.model('blogs', blogsSchema)
 
 const postsSchema = new mongoose.Schema<IPost>({
-    id: String,
+    _id: String,
     blogId: String,
     title: String,
     shortDescription: String,

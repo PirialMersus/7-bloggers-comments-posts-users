@@ -14,8 +14,8 @@ const serializedBlogsSortBy = (value: string) => {
             return 'name';
         case 'youtubeUrl':
             return 'youtubeUrl'
-        case 'id':
-            return 'id'
+        case '_id':
+            return '_id'
         default:
             return 'createdAt'
     }
