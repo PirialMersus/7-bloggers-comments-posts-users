@@ -65,7 +65,9 @@ export class UsersService {
         newUser.accountData.accessToken = accessToken
 
         const createdUser = await this.usersRepository.createUser(newUser)
+        const user = await this.usersRepository.findUserByConfirmationCode(createdUser!.accountData.accessToken)
         console.log('createdUser', createdUser)
+        console.log('user from bd', user)
         try {
             await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', accessToken)
         } catch (error) {

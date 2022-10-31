@@ -18,7 +18,7 @@ authRouter
     .post('/registration-confirmation',
         body('code').trim().not().isEmpty().withMessage('enter input value in code field'),
         // limiter,
-        body('code').custom(async (value, {req}) => {
+        body('code').custom(async (value) => {
             const user = await usersRepository.findUserByConfirmationCode(value)
             if (!user) throw new Error('code is incorrect');
             return true;
@@ -43,6 +43,7 @@ authRouter
                 throw new Error('enter correct value to email field');
             }
             const foundUserByEmail = await usersRepository.findUserByEmail(value)
+            console.log('foundUserByEmail', foundUserByEmail)
             if (!foundUserByEmail) {
                 throw new Error('User with such email doesnt exist');
             }

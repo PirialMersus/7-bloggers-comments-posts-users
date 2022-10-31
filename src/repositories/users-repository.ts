@@ -81,7 +81,7 @@ export class UsersRepository {
     }
 
     async findUserByConfirmationCode(code: string): Promise<IUser | null> {
-        const user = await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
+        const user = await UsersModel.findOne({'accountData.accessToken': code})
         return user
     }
 

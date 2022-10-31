@@ -38,6 +38,7 @@ export class AuthController {
     }
     createUser = async (req: Request, res: Response) => {
         const user = await this.usersService.createUser(req.body.login, req.body.email, req.body.password)
+
         if (user) {
             res.sendStatus(204)
         } else {
