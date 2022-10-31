@@ -39,6 +39,7 @@ export class CommentsRepository {
     }
 
     async createComment(comment: IComment): Promise<IComment | null> {
+        console.log('comment', comment)
         await CommentsModel.insertMany([comment])
         return CommentsModel.findOne({_id: comment._id}).select({_id: 0, __v: 0, postId: 0})
     }
