@@ -18,6 +18,11 @@ authRouter
     .post('/registration-confirmation',
         body('code').trim().not().isEmpty().withMessage('enter input value in code field'),
         // limiter,
+        body('code').custom(async (value, {req}) => {
+            const user = await usersRepository.findUserByConfirmationCode(value)
+            if (!user) throw new Error('code is incorrect');
+            return true;
+        }),
         inputValidatorMiddleware,
         authController.registerConfirm
     )
