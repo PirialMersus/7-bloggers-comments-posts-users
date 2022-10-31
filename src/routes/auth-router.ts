@@ -21,6 +21,9 @@ authRouter
         body('code').custom(async (value) => {
             const user = await usersRepository.findUserByConfirmationCode(value)
             if (!user) throw new Error('code is incorrect');
+            if (user.emailConfirmation.isConfirmed) {
+                throw new Error('code is already confirmed');
+            }
             return true;
         }),
         inputValidatorMiddleware,
