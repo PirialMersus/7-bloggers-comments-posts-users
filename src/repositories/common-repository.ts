@@ -1,4 +1,4 @@
-import {BlogsModel, PostsModel, UsersModel} from "./db";
+import {BlogsModel, CommentsModel, PostsModel, UsersModel} from "./db";
 
 
 export const commonRepository = {
@@ -6,10 +6,12 @@ export const commonRepository = {
         const resultBlogs: { deletedCount: number } = await BlogsModel.deleteMany({})
         const resultPosts: { deletedCount: number } = await PostsModel.deleteMany({})
         const resultUsers: { deletedCount: number } = await UsersModel.deleteMany({})
+        const resultComments: { deletedCount: number } = await CommentsModel.deleteMany({})
         // const resultPosts = await postsCollection.deleteMany({})
         return resultBlogs.deletedCount >= 0
             && resultPosts.deletedCount >= 0
             && resultUsers.deletedCount >= 0
+            && resultComments.deletedCount >= 0
     },
 }
 
