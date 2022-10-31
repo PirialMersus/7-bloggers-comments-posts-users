@@ -81,11 +81,18 @@ export class UsersRepository {
     }
 
     async findUserByConfirmationCode(code: string): Promise<IUser | null> {
-        const user = await UsersModel.findOne({'accountData.accessToken': code})
+        const user = await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
         return user
     }
+    async confirmUser(code: string): Promise<boolean> {
+        const result: { matchedCount: number } = await UsersModel.updateOne({'emailConfirmation.confirmationCode': code},
+            {
+                $set: {'accountData.isConfirmed': true}
+            })
+        return result.matchedCount === 1
+    }
 
-    async updateConfirmation(_id: ObjectId): Promise<boolean> {
+    async confirmUserByEmail(_id: ObjectId): Promise<boolean> {
         const result: { modifiedCount: number } = await UsersModel.updateOne({_id}, {$set: {'emailConfirmation.isConfirmed': true}})
         return result.modifiedCount === 1
     }

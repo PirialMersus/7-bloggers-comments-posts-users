@@ -65,9 +65,7 @@ export class UsersService {
         newUser.accountData.accessToken = accessToken
 
         const createdUser = await this.usersRepository.createUser(newUser)
-        const user = await this.usersRepository.findUserByConfirmationCode(createdUser!.accountData.accessToken)
-        console.log('createdUser', createdUser)
-        console.log('user from bd', user)
+        // console.log('createdUser', createdUser)
         try {
             await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', accessToken)
         } catch (error) {
@@ -128,7 +126,8 @@ export class UsersService {
         if (!user) return false
         if (user.emailConfirmation.confirmationCode) return false
         if (user.emailConfirmation.confirmationCode !== code) return false
-        return user.emailConfirmation.expirationDate >= new Date();
+        if (user.emailConfirmation.expirationDate < new Date()) return false
+        return this.usersRepository.confirmUser(code)
     }
 }
 
