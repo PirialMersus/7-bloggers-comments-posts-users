@@ -62,6 +62,7 @@ export class UsersService {
 
         const newUser: User = User.create(login, email, passwordSalt, passwordHash, date, isConfirmed)
         const accessToken = await jwtService.createJWT(newUser)
+        newUser.accountData.accessToken = accessToken
 
         const createdUser = await this.usersRepository.createUser(newUser)
         console.log('createdUser', createdUser)
@@ -101,6 +102,21 @@ export class UsersService {
         if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken))
             return {accessToken, refreshToken}
         return null
+    }
+    async findUserByEmail(email: string,): Promise<IUser | null>{
+        return this.usersRepository.findUserByEmail(email)
+    }
+    async registerEmailResending(email: string,): Promise<boolean>{
+        const user = await this.usersRepository.findUserByEmail(email)
+        if (!user) return false
+        try {
+            await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', user!.accountData.accessToken)
+        } catch (error) {
+            console.error(error)
+            await this.usersRepository.deleteUser(user._id)
+            return false
+        }
+        return true
     }
 }
 

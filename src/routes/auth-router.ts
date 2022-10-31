@@ -21,7 +21,31 @@ authRouter
     )
     .post('/registration-email-resending',
         // limiter,
-        authController.registerConfirm
+        body('email').trim().not().isEmpty().withMessage('enter input value in email field'),
+        body('email').isLength({max: 100}).withMessage('email length should be less then 100'),
+        body('email').custom(async (value, {req}) => {
+            const regExp = new RegExp("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+            if (!regExp.test(req.body.email)) {
+                throw new Error('enter correct value to email field');
+            }
+            return true;
+        }),
+        body('email').custom(async (value, {req}) => {
+            const regExp = new RegExp("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+            if (!regExp.test(req.body.email)) {
+                throw new Error('enter correct value to email field');
+            }
+            const foundUserByEmail = await usersRepository.findUserByEmail(value)
+            if (!foundUserByEmail) {
+                throw new Error('User with such email doesnt exist');
+            }
+            if (foundUserByEmail.emailConfirmation.isConfirmed) {
+                throw new Error('User with such email is already confirmed');
+            }
+            return true;
+        }),
+        inputValidatorMiddleware,
+        authController.registerEmailResending
     )
 
     .post('/registration',
