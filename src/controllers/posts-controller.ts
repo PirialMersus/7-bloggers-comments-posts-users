@@ -99,6 +99,8 @@ export class PostsController {
     async createCommentForPost(req: Request, res: Response) {
         const postId: string = req.params.postId
         const user: IUser | null = req.user
+        console.log('postId', postId)
+        console.log('user', user)
 
         const post = await this.postsService.findPostById(postId)
         // console.log('post', post)

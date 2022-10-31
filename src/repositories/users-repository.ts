@@ -41,7 +41,7 @@ export class UsersRepository {
     }
 
     async findUserById(_id: ObjectId): Promise<IUser | null> {
-        let user = UsersModel.findOne({_id}).select({_id: 0, __v: 0})
+        let user = UsersModel.findOne({_id}).select({__v: 0})
         if (user) {
             return user
         } else {
@@ -59,7 +59,7 @@ export class UsersRepository {
     }
 
     async findUserByLogin(login: string): Promise<IUser | null> {
-        let user = UsersModel.findOne({'accountData.login': login}).select({_id: 0, __v: 0})
+        let user = UsersModel.findOne({'accountData.login': login}).select({__v: 0})
         if (user) {
             return user
         } else {

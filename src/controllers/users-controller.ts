@@ -30,12 +30,16 @@ export class UsersController {
         res.send(users);
     }
 
-    async getUser(req: Request, res: Response) {
+    getUser = async (req: Request, res: Response) => {
         const user = await this.usersService.findUserByIdSomeDataReturn(req.user!._id)
+        if (req.user) {
+            console.log('req.user._id', req.user._id)
+        }
+
         if (user) {
             res.status(200).send(user)
         } else {
-            res.send(401);
+            res.sendStatus(401);
         }
 
     }
@@ -43,7 +47,12 @@ export class UsersController {
     async createUser(req: Request, res: Response) {
         const newUser = await this.usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (newUser) {
-            res.status(201).send(newUser)
+            res.status(201).send({
+                id: newUser._id,
+                login: newUser.accountData.login,
+                email: newUser.accountData.email,
+                createdAt: newUser.accountData.createdAt
+            })
         } else {
             errorObj.errorsMessages = [{
                 message: 'Cant create new user',

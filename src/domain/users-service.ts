@@ -92,15 +92,19 @@ export class UsersService {
     }
 
     async checkCredentials(login: string, password: string): Promise<{ accessToken: string, refreshToken: string } | null> {
-        const user: IUser | null = await this.usersRepository.findUser(login)
+        console.log('login', login)
+        console.log('password', password)
+        const user: IUser | null = await this.usersRepository.findUserByLogin(login)
+
         if (!user) return null
         const passwordHash = await jwtService.generateHash(password, user.accountData.passwordSalt)
         if (user.accountData.passwordHash !== passwordHash) return null
-
-        const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10s'})
-        const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20s'})
-        if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken))
+        console.log('user---id', user._id)
+        const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10h'})
+        const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20h'})
+        if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken)) {
             return {accessToken, refreshToken}
+        }
         return null
     }
 

@@ -99,5 +99,5 @@ authRouter
     )
     .get('/me',
         bearerAuthMiddleware,
-        usersController.getUser.bind(authController)
+        usersController.getUser
     )
