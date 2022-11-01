@@ -3,6 +3,7 @@ import {FindConditionsObjType, FindConditionsPostsObjType} from "../domain/posts
 import {injectable} from "inversify";
 import {IBlog, IPost} from "../types/types";
 import {PostsModel} from "./db";
+import {ObjectId} from "mongodb";
 
 @injectable()
 export class PostsRepository {
@@ -74,7 +75,7 @@ export class PostsRepository {
                      shortDescription: string,
                      content: string,
                      blogId: string): Promise<boolean> {
-        const blogger: IBlog | null = await this.blogsRepository.findBlogById(blogId)
+        const blogger: IBlog | null = await this.blogsRepository.findBlogById(ObjectId.createFromHexString(blogId))
         let result: { matchedCount: number } = await PostsModel.updateOne({id}, {
             $set: {
                 title,

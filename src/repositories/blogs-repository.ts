@@ -2,6 +2,7 @@ import {BlogsModel} from "./db";
 import {IFindObj} from "../domain/blogs-service";
 import {injectable} from "inversify";
 import {IBlog} from "../types/types";
+import {ObjectId} from "mongodb";
 
 export interface IReturnedFindObj<T> {
     pagesCount: number,
@@ -37,7 +38,7 @@ export class BlogsRepository {
         })
     }
 
-    async findBlogById(_id: string): Promise<IBlog | null> {
+    async findBlogById(_id: ObjectId): Promise<IBlog | null> {
         const blog = BlogsModel.findOne({_id}).select({_id: 0, __v: 0})
         if (blog) {
             return blog

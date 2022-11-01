@@ -2,6 +2,7 @@ import {BlogsRepository, IReturnedFindObj} from "../repositories/blogs-repositor
 import {Blog} from "../repositories/db"
 import {injectable} from "inversify";
 import {IBlog} from "../types/types";
+import {ObjectId} from "mongodb";
 
 export interface IFindObj {
     name: string,
@@ -32,7 +33,7 @@ export class BlogsService {
         return this.blogsRepository.findBlogs(findConditionsObj, sortBy, sortDirection)
     }
 
-    async findBlogById(id: string) {
+    async findBlogById(id: ObjectId) {
         return this.blogsRepository.findBlogById(id)
     }
     //TODO: ask why obj is so strange. How to work with this.

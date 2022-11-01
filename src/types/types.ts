@@ -28,8 +28,9 @@ export interface IPost {
     shortDescription: string,
     content: string,
     blogName: string,
-    createdAt: string
-    _id: ObjectId
+    createdAt: string,
+    _id: ObjectId,
+    id: ObjectId,
 }
 export type AccountDataType = {
     login: string,
@@ -47,11 +48,13 @@ export type EmailConfirmationType = {
 }
 export interface IUser {
     _id: ObjectId,
+    id: ObjectId,
     accountData: AccountDataType,
     emailConfirmation: EmailConfirmationType
 }
 export interface IComment {
     _id: ObjectId,
+    id: ObjectId,
     content: string,
     userId: ObjectId,
     createdAt: string,

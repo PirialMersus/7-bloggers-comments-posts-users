@@ -7,6 +7,7 @@ import {injectable} from "inversify";
 import {PostsService} from "../domain/posts-service";
 import {IBlog, IPost, IRequest} from "../types/types";
 import {serializedPostsSortBy} from "../utils/helpers";
+import {ObjectId} from "mongodb";
 
 const serializedBlogsSortBy = (value: string) => {
     switch (value) {
@@ -41,7 +42,7 @@ export class BlogsController {
     }
 
     async getBlog(req: Request, res: Response) {
-        let blog = await this.blogsService.findBlogById(req.params.blogId)
+        let blog = await this.blogsService.findBlogById(ObjectId.createFromHexString(req.params.blogId))
 
         if (blog) {
             res.send(blog)
@@ -56,7 +57,7 @@ export class BlogsController {
         const sortBy: string = req.query.sortBy ? req.query.sortBy : 'createdAt'
         const sortDirection = req.query.sortDirection ? req.query.sortDirection : 'desc'
         const blogId: string = req.params.blogId
-        const isBloggerPresent = await this.blogsService.findBlogById(blogId)
+        const isBloggerPresent = await this.blogsService.findBlogById(ObjectId.createFromHexString(blogId))
         if (isBloggerPresent) {
             const response: IReturnedFindObj<IPost> = await this.postsService.findPostsByBlogId(
                 blogId,
@@ -85,7 +86,7 @@ export class BlogsController {
     async createPostForBlog(req: Request, res: Response) {
         const blogId: string = req.params.blogId
 
-        const isBlogPresent = await this.blogsService.findBlogById(blogId)
+        const isBlogPresent = await this.blogsService.findBlogById(ObjectId.createFromHexString(blogId))
         if (isBlogPresent) {
             const newPost = await this.postsService.createPost(req.body.title,
                 req.body.shortDescription,
@@ -104,7 +105,7 @@ export class BlogsController {
 
         const isUpdated: boolean = await this.blogsService.updateBlogger(id, name, youtubeUrl)
         if (isUpdated) {
-            const blogger = await this.blogsService.findBlogById(id)
+            const blogger = await this.blogsService.findBlogById(ObjectId.createFromHexString(id))
             res.status(204).send(blogger)
         } else {
             errorObj.errorsMessages = [{

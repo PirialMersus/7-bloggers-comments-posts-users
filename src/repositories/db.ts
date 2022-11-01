@@ -24,6 +24,7 @@ export class Blog implements IBlog {
 export class Comment implements IComment {
     createdAt: string
     _id: ObjectId
+    id: ObjectId
 
     private constructor(public content: string,
                         public userId: ObjectId,
@@ -32,6 +33,7 @@ export class Comment implements IComment {
                         date: Date) {
         this.createdAt = date.toISOString()
         this._id = new ObjectId()
+        this.id = this._id
     }
 
     static create = (content: string,
@@ -47,6 +49,7 @@ export class Comment implements IComment {
 export class Post implements IPost {
     createdAt: string
     _id: ObjectId
+    id: ObjectId
     blogName: string
     static date: Date
 
@@ -58,6 +61,7 @@ export class Post implements IPost {
                         date: Date) {
         this.createdAt = date.toISOString()
         this._id = new ObjectId()
+        this.id = this._id
         this.blogName = possibleBlogName ? possibleBlogName : ''
     }
 
@@ -78,6 +82,7 @@ export class Post implements IPost {
 
 export class User implements IUser {
     _id: ObjectId
+    id: ObjectId
     static date: Date
     accountData: AccountDataType
     emailConfirmation: EmailConfirmationType
@@ -93,6 +98,7 @@ export class User implements IUser {
                         date: Date,
                         isConfirmed: boolean) {
         this._id = new ObjectId()
+        this.id = this._id
         this.accountData = {
             login,
             email,
@@ -138,6 +144,7 @@ export const client = new MongoClient(uri);
 // export const commentsCollection = client.db().collection<IComment>('comments')
 const usersSchema = new mongoose.Schema<IUser>({
     _id: ObjectId,
+    id: ObjectId,
     accountData: {
         login: String,
         email: String,
@@ -171,12 +178,15 @@ const postsSchema = new mongoose.Schema<IPost>({
     shortDescription: String,
     content: String,
     blogName: String,
-    createdAt: String
+    createdAt: String,
+    id: String,
+
 });
 export const PostsModel = mongoose.model('posts', postsSchema)
 
 const commentsSchema = new mongoose.Schema<IComment>({
     _id: ObjectId,
+    id: ObjectId,
     userId: String,
     content: String,
     userLogin: String,

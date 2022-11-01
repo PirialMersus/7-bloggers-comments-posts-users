@@ -8,6 +8,7 @@ import {BlogsService} from "../domain/blogs-service";
 import {IComment, IPost, IQuery, IRequest, IUser} from "../types/types";
 import {serializedCommentsSortBy, serializedPostsSortBy} from "../utils/helpers";
 import {CommentsService} from "../domain/comments-service";
+import {ObjectId} from "mongodb";
 
 @injectable()
 export class PostsController {
@@ -30,7 +31,7 @@ export class PostsController {
     }
 
     async findBlogById(id: string) {
-        return await this.blogsService.findBlogById(id)
+        return await this.blogsService.findBlogById(ObjectId.createFromHexString(id))
     }
 
     async getPost(req: Request, res: Response) {

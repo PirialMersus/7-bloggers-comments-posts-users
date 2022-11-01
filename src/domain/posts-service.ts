@@ -3,6 +3,7 @@ import {Post} from "../repositories/db"
 import {PostsRepository} from "../repositories/posts-repository"
 import {injectable} from "inversify";
 import {IPost} from "../types/types";
+import {ObjectId} from "mongodb";
 
 export type FindConditionsPostsObjType = {
     pageNumber: number
@@ -57,7 +58,7 @@ export class PostsService {
     }
 
     async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<IPost | null> {
-        const blog = await this.blogsRepository.findBlogById(blogId)
+        const blog = await this.blogsRepository.findBlogById(ObjectId.createFromHexString(blogId))
         const date = new Date()
         const newPost: IPost = Post.create(title,
             shortDescription,
