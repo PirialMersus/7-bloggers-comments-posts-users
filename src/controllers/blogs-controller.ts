@@ -41,7 +41,7 @@ export class BlogsController {
     }
 
     async getBlog(req: Request, res: Response) {
-        let blog: IBlog | null = await this.blogsService.findBlogById(req.params.blogId)
+        let blog = await this.blogsService.findBlogById(req.params.blogId)
 
         if (blog) {
             res.send(blog)

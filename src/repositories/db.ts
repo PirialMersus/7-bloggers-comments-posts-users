@@ -8,10 +8,12 @@ import add from 'date-fns/add';
 export class Blog implements IBlog {
     createdAt: string
     _id: ObjectId
+    id: ObjectId
 
     private constructor(public name: string, public youtubeUrl: string, date: Date) {
         this.createdAt = date.toISOString()
         this._id = new ObjectId()
+        this.id = this._id
     }
 
     static create = (name: string, youtubeUrl: string, date: Date) => {

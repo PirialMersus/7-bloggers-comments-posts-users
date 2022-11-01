@@ -19,7 +19,8 @@ export interface IBlog {
     name: string,
     youtubeUrl: string,
     createdAt: string
-    _id: ObjectId
+    id: ObjectId
+    _id?: ObjectId
 }
 export interface IPost {
     blogId: string,
