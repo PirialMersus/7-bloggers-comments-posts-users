@@ -67,9 +67,10 @@ export class UsersService {
 
         // console.log('createdUser', createdUser)
         try {
-            await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', accessToken)
+            await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', newUser.emailConfirmation.confirmationCode)
         } catch (error) {
             console.error(error)
+            console.log('werqwerwerwerewr')
             await this.usersRepository.deleteUser(newUser._id)
             return null
         }
