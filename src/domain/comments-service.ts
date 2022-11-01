@@ -38,11 +38,12 @@ export class CommentsService {
     }
 
     async createComment(post: IPost, content: string, user: IUser): Promise<IComment | null> {
+        console.log('post', post)
         const date = new Date()
         const newComment: IComment = Comment.create(content,
             user._id,
             user.accountData.login,
-            post._id,
+            post.id,
             date);
         console.log('newComment', newComment)
         return this.commentsRepository.createComment(newComment)

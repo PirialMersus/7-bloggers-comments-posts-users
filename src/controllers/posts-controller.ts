@@ -98,14 +98,15 @@ export class PostsController {
     }
 
     async createCommentForPost(req: Request, res: Response) {
+        console.log('helooooooooooooooooooooo')
         const postId: string = req.params.postId
         const user: IUser | null = req.user
-        console.log('postId', postId)
-        console.log('user', user)
+        // console.log('postId', postId)
+        // console.log('user', user)
 
         const post = await this.postsService.findPostById(postId)
-        // console.log('post', post)
-        // console.log('user', user)
+        console.log('post', post)
+        console.log('user', user)
         if (!post || !user) {
             res.sendStatus(404)
             return
