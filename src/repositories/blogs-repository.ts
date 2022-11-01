@@ -48,6 +48,7 @@ export class BlogsRepository {
 
     async createBlog(newBlog: IBlog): Promise<IBlog | null> {
         await BlogsModel.insertMany([newBlog])
+        console.log('newBlog', newBlog)
         return BlogsModel.findOne({_id: newBlog._id}).select({_id: 0, __v: 0})
     }
 

@@ -159,7 +159,8 @@ const blogsSchema = new mongoose.Schema<IBlog>({
     name: String,
     youtubeUrl: String,
     _id: String,
-    createdAt: String
+    createdAt: String,
+    id: String
 });
 export const BlogsModel = mongoose.model('blogs', blogsSchema)
 
