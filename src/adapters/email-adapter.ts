@@ -17,7 +17,7 @@ export const emailAdapter = {
             from: '"Gena 👻" <genafesenko1985@gmail.com>', // sender address
             to: email, // list of receivers
             subject: subject, // Subject line
-            html: `<h1>${message}</h1><h3>Access token:</h3> <h2>${accessToken}</h2>`, // html body
+            html: `<a>https://bloggers-comments-posts-user.herokuapp.com/auth/confirm-registration?code=${accessToken}</a>`,
         })
     }
 }
