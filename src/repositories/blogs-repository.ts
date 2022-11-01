@@ -38,7 +38,7 @@ export class BlogsRepository {
     }
 
     async findBlogById(_id: string): Promise<IBlog | null> {
-        const blog = BlogsModel.findOne({_id}).select({_id: 0, __v: 0})
+        const blog = BlogsModel.findOne({_id}).select({__v: 0})
         if (blog) {
             return blog
         } else {

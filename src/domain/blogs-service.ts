@@ -10,6 +10,12 @@ export interface IFindObj {
     skip: number,
 }
 
+const objectWithoutKey = (object: any, key: string) => {
+    const {[key]: deletedKey, ...otherKeys} = object;
+    return otherKeys;
+}
+
+
 @injectable()
 export class BlogsService {
     constructor(protected blogsRepository: BlogsRepository) {
@@ -31,9 +37,14 @@ export class BlogsService {
         return this.blogsRepository.findBlogs(findConditionsObj, sortBy, sortDirection)
     }
 
-    async findBlogById(id: string): Promise<IBlog | null> {
-        return this.blogsRepository.findBlogById(id)
+    async findBlogById(id: string) {
+        const blog: IBlog | null = await this.blogsRepository.findBlogById(id)
+        const jsonBlog = JSON.stringify(blog)
+        const parsedBlog = JSON.parse(jsonBlog)
+        const copyBlogWihId = {...parsedBlog, id: parsedBlog._id}
+        return objectWithoutKey(copyBlogWihId, '_id')
     }
+    //TODO: ask why obj is so strange. How to work with this.
 
     async createBlog(name: string, youtubeUrl: string): Promise<IBlog | null> {
         const date = new Date()
