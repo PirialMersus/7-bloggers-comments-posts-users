@@ -2,8 +2,8 @@ import nodemailer from "nodemailer";
 
 export const emailAdapter = {
     sendMail: async (email: string,
-               message: string,
-               subject: string, accessToken: string) => {
+                     message: string,
+                     subject: string, emailRegistrationCode: string) => {
         let transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -17,7 +17,7 @@ export const emailAdapter = {
             from: '"Gena 👻" <genafesenko1985@gmail.com>', // sender address
             to: email, // list of receivers
             subject: subject, // Subject line
-            html: `<a>https://bloggers-comments-posts-user.herokuapp.com/auth/confirm-registration?code=${accessToken}</a>`,
+            html: `<a href='https://bloggers-comments-posts-user.herokuapp.com/auth/confirm-registration?code=${emailRegistrationCode}'>${emailRegistrationCode}</a>`
         })
     }
 }
