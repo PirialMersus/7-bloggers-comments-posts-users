@@ -117,7 +117,7 @@ export class UsersService {
         const user = await this.usersRepository.findUserByEmail(email)
         if (!user) return false
         try {
-            await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', user!.accountData.accessToken)
+            await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', user!.emailConfirmation.confirmationCode)
         } catch (error) {
             console.error(error)
             await this.usersRepository.deleteUser(user._id)
