@@ -33,7 +33,14 @@ export class CommentsService {
 
     async updateComment(_id: ObjectId, content: string, userId: ObjectId | undefined) {
         const comment = await this.commentsRepository.findCommentById(_id)
-        if (comment?.userId !== userId) return 'notMyOwnComment'
+        console.log('comment', comment)
+        console.log('content', content)
+        console.log('_id', _id)
+        if (comment?.userId.toString() !== userId?.toString()) {
+            console.log('comment?.userId', comment?.userId)
+            console.log('userId', userId)
+            return 'notMyOwnComment'
+        }
         return this.commentsRepository.updateComment(_id, content)
     }
 
