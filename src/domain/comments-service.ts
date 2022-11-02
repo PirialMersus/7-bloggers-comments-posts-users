@@ -56,7 +56,7 @@ export class CommentsService {
 
     async deleteComment(id: ObjectId, userId: ObjectId | undefined): Promise<boolean | 'notMyComment'> {
         const comment = await this.commentsRepository.findCommentById(id)
-        if (comment?.userId !== userId) return 'notMyComment'
+        if (comment?.userId.toString() !== userId?.toString()) return 'notMyComment'
         return this.commentsRepository.deleteComment(id)
     }
 }
