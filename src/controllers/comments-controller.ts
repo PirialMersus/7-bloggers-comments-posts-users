@@ -30,8 +30,7 @@ export class CommentsController {
             await this.commentsService.updateComment(
                 ObjectId.createFromHexString(id),
                 content,
-                user?.id)
-        ///
+                user?._id)
         if (isUpdated) {
             res.sendStatus(204)
             return

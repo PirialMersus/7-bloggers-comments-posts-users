@@ -45,14 +45,14 @@ export class CommentsRepository {
     }
 
     async updateComment(_id: ObjectId, content: string): Promise<boolean> {
-        let result: {matchedCount: number} = await CommentsModel.updateOne({_id}, {
+        let result: {matchedCount: number} = await CommentsModel.updateOne({id: _id}, {
             $set: {content}
         })
         return result.matchedCount === 1
     }
 
     async deleteComment(_id: ObjectId): Promise<boolean> {
-        const result: {deletedCount: number} = await CommentsModel.deleteOne({_id})
+        const result: {deletedCount: number} = await CommentsModel.deleteOne({id: _id})
         return result.deletedCount === 1
     }
 }
