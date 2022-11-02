@@ -6,7 +6,6 @@ import {UsersController} from "../controllers/users-controller";
 import {body} from "express-validator";
 import {inputValidatorMiddleware} from "../middlewares/input-validator-middleware";
 import {UsersRepository} from "../repositories/users-repository";
-import {transcode} from "buffer";
 // import {limiter} from "../middlewares/rate-limiter";
 
 export const authRouter = Router({})
@@ -47,7 +46,6 @@ authRouter
                 throw new Error('enter correct value to email field');
             }
             const foundUserByEmail = await usersRepository.findUserByEmail(value)
-            console.log('foundUserByEmail', foundUserByEmail)
             if (!foundUserByEmail) {
                 throw new Error('User with such email doesnt exist');
             }

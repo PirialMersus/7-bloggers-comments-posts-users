@@ -10,6 +10,7 @@ import {ObjectId} from "mongodb";
 import {jwtService} from "../application/jwtService";
 import jwt from "jsonwebtoken";
 import {settings} from "../settings/settings";
+import {v4 as uuidv4} from "uuid";
 
 @injectable()
 export class UsersService {
@@ -61,8 +62,7 @@ export class UsersService {
         const date = new Date()
 
         const newUser: User = User.create(login, email, passwordSalt, passwordHash, date, isConfirmed)
-        const accessToken = await jwtService.createJWT(newUser)
-        newUser.accountData.accessToken = accessToken
+        newUser.accountData.accessToken = await jwtService.createJWT(newUser)
         const createdUser = await this.usersRepository.createUser(newUser)
 
         // console.log('createdUser', createdUser)
@@ -93,8 +93,6 @@ export class UsersService {
     }
 
     async checkCredentials(login: string, password: string): Promise<{ accessToken: string, refreshToken: string } | null> {
-        console.log('login', login)
-        console.log('password', password)
         const user: IUser | null = await this.usersRepository.findUserByLogin(login)
 
         if (!user) return null
@@ -116,8 +114,12 @@ export class UsersService {
     async registerEmailResending(email: string,): Promise<boolean> {
         const user = await this.usersRepository.findUserByEmail(email)
         if (!user) return false
+
+        const newEmailConfirmationCode = uuidv4();
+        const isUpdated = await this.usersRepository.updateUserEmailConfirmation(user.id, newEmailConfirmationCode);
+        if (!isUpdated) return false
         try {
-            await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', user!.emailConfirmation.confirmationCode)
+            await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', newEmailConfirmationCode)
         } catch (error) {
             console.error(error)
             await this.usersRepository.deleteUser(user._id)

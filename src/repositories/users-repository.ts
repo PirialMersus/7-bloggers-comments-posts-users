@@ -94,6 +94,13 @@ export class UsersRepository {
             })
         return result.matchedCount === 1
     }
+    async updateUserEmailConfirmation(id: ObjectId, emailConfirmationCode: string): Promise<boolean> {
+        const result: { matchedCount: number } = await UsersModel.updateOne({id},
+            {
+                $set: {'emailConfirmation.confirmationCode': emailConfirmationCode}
+            })
+        return result.matchedCount === 1
+    }
 
     async confirmUserByEmail(_id: ObjectId): Promise<boolean> {
         const result: { modifiedCount: number } = await UsersModel.updateOne({_id}, {$set: {'emailConfirmation.isConfirmed': true}})
