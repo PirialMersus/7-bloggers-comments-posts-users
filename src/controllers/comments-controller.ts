@@ -45,7 +45,7 @@ export class CommentsController {
         const id = req.params.id;
         const isDeleted: boolean | 'notMyComment' = await this.commentsService.deleteComment(ObjectId.createFromHexString(id), req.user?._id)
 
-        if (isDeleted && isDeleted !== 'notMyComment') {
+        if (isDeleted) {
             res.sendStatus(204)
 
         } else {
