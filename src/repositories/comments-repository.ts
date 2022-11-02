@@ -8,7 +8,7 @@ import {CommentsModel} from "./db";
 @injectable()
 export class CommentsRepository {
     async findCommentById(_id: ObjectId): Promise<IComment | null> {
-        let comment = CommentsModel.findOne({_id}).select({_id: 0, __v: 0, postId: 0})
+        const comment = CommentsModel.findOne({_id}).select({_id: 0, __v: 0, postId: 0})
         if (comment) {
             return comment
         } else {
@@ -45,14 +45,14 @@ export class CommentsRepository {
     }
 
     async updateComment(_id: ObjectId, content: string): Promise<boolean> {
-        let result: {matchedCount: number} = await CommentsModel.updateOne({id: _id}, {
+        let result: {matchedCount: number} = await CommentsModel.updateOne({_id}, {
             $set: {content}
         })
         return result.matchedCount === 1
     }
 
     async deleteComment(_id: ObjectId): Promise<boolean> {
-        const result: {deletedCount: number} = await CommentsModel.deleteOne({id: _id})
+        const result: {deletedCount: number} = await CommentsModel.deleteOne({_id})
         return result.deletedCount === 1
     }
 }

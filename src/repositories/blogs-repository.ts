@@ -60,8 +60,8 @@ export class BlogsRepository {
         return result.matchedCount === 1
     }
 
-    async deleteBlog(id: string): Promise<boolean> {
-        const result: { deletedCount: number } = await BlogsModel.deleteOne({_id: id})
+    async deleteBlog(_id: string): Promise<boolean> {
+        const result: { deletedCount: number } = await BlogsModel.deleteOne({_id})
         return result.deletedCount === 1
     }
 
