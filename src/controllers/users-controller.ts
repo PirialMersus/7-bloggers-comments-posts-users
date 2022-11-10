@@ -45,7 +45,7 @@ export class UsersController {
         const newUser = await this.usersService.createUser(req.body.login, req.body.email, req.body.password)
         if (newUser) {
             res.status(201).send({
-                id: newUser._id,
+                // id: newUser._id,
                 login: newUser.accountData.login,
                 email: newUser.accountData.email,
                 createdAt: newUser.accountData.createdAt
