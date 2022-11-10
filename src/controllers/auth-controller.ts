@@ -13,10 +13,15 @@ export class AuthController {
         const result = await this.usersService.checkCredentials(req.body.login, req.body.password)
         if (result) {
             res
-                .cookie('refreshToken', result.refreshToken, {httpOnly: true, expires: add(new Date, {seconds: 23}),})
-                .status(200).send({
-                "accessToken": result.accessToken
-            })
+                .cookie('refreshToken', result.refreshToken, {
+                    secure: true,
+                    httpOnly: true,
+                    expires: add(new Date, {seconds: 23}),
+                })
+                .status(200)
+                .send({
+                    "accessToken": result.accessToken
+                })
         } else {
             errorObj.errorsMessages = [{
                 message: 'Cant login this user',
