@@ -11,7 +11,10 @@ import {errorObj} from "./middlewares/input-validator-middleware";
 import {authRouter} from "./routes/auth-router";
 import {commentsRouter} from "./routes/comments-router";
 import {emailRouter} from "./routes/email-router";
+import cookieParser from "cookie-parser"
+
 const app = express()
+app.use(cookieParser())
 
 const jsonBodyMiddleware = bodyParser.json()
 app.use(jsonBodyMiddleware)
@@ -34,7 +37,7 @@ app.delete('/testing/all-data', async (req: Request, res: Response) => {
     const isAllDeleted = await commonRepository.deleteAll();
     if (isAllDeleted) {
         res.sendStatus(204)
-    }else {
+    } else {
         errorObj.errorsMessages = [{
             message: 'Something wrong on the server',
             field: 'none',

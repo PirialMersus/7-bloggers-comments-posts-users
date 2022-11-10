@@ -2,6 +2,7 @@ import {injectable} from "inversify";
 import {UsersService} from "../domain/users-service";
 import {Request, Response} from "express";
 import {errorObj} from "../middlewares/input-validator-middleware";
+import add from 'date-fns/add';
 
 @injectable()
 export class AuthController {
@@ -11,7 +12,9 @@ export class AuthController {
     checkCredentials = async (req: Request, res: Response) => {
         const result = await this.usersService.checkCredentials(req.body.login, req.body.password)
         if (result) {
-            res.status(200).send({
+            res
+                .cookie('refreshToken', result.refreshToken, {httpOnly: true, expires: add(new Date, {seconds: 23}),})
+                .status(200).send({
                 "accessToken": result.accessToken
             })
         } else {
