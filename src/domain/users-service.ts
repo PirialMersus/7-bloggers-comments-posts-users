@@ -98,8 +98,8 @@ export class UsersService {
         if (!user) return null
         const passwordHash = await jwtService.generateHash(password, user.accountData.passwordSalt)
         if (user.accountData.passwordHash !== passwordHash) return null
-        const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '13s'})
-        const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '23s'})
+        const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10s'})
+        const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20s'})
         if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken)) {
             return {accessToken, refreshToken}
         }
