@@ -70,7 +70,6 @@ export class UsersService {
             await emailAdapter.sendMail(email, 'account is ready', 'email confirmation', newUser.emailConfirmation.confirmationCode)
         } catch (error) {
             console.error(error)
-            console.log('werqwerwerwerewr')
             await this.usersRepository.deleteUser(newUser._id)
             return null
         }
@@ -92,15 +91,32 @@ export class UsersService {
         return this.usersRepository.deleteUser(id)
     }
 
-    async checkCredentials(login: string, password: string): Promise<{ accessToken: string, refreshToken: string } | null> {
-        const user: IUser | null = await this.usersRepository.findUserByLogin(login)
+    async checkCredentials(loginOrEmail: string, password: string): Promise<{ accessToken: string, refreshToken: string } | null> {
+        let user: IUser | null
+        if (loginOrEmail.includes('@')) {
+            user = await this.usersRepository.findUserByEmail(loginOrEmail)
+        } else {
+            user = await this.usersRepository.findUserByLogin(loginOrEmail)
+        }
+
 
         if (!user) return null
         const passwordHash = await jwtService.generateHash(password, user.accountData.passwordSalt)
         if (user.accountData.passwordHash !== passwordHash) return null
-        const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10s'})
-        const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20s'})
-        if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken)) {
+        return this.generateAccessAndRefreshToken(user._id)
+        // const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10s'})
+        // const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20s'})
+        // if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken)) {
+        //     return {accessToken, refreshToken}
+        // }
+        // return null
+    }
+
+    generateAccessAndRefreshToken = async (userId: ObjectId): Promise<{ accessToken: string, refreshToken: string } | null> => {
+
+        const accessToken = jwt.sign({userId: userId}, settings.JWT_SECRET, {expiresIn: '10s'})
+        const refreshToken = jwt.sign({userId: userId}, settings.JWT_SECRET, {expiresIn: '20s'})
+        if (await this.usersRepository.addRefreshAndAccessTokensToUser(userId, accessToken, refreshToken)) {
             return {accessToken, refreshToken}
         }
         return null
@@ -108,6 +124,16 @@ export class UsersService {
 
     async findUserByEmail(email: string,): Promise<IUser | null> {
         return this.usersRepository.findUserByEmail(email)
+    }
+    async findUserByRefreshToken(token: string,): Promise<IUser | null> {
+        return this.usersRepository.findUserByRefreshToken(token)
+    }
+    async logout(user: IUser,): Promise<boolean | null> {
+        const isTokensAddedToBlackList = await this.usersRepository.addTokensToBlackList(user)
+        if (!isTokensAddedToBlackList){
+            return null
+        }
+       return this.usersRepository.deleteUserTokens(user!)
     }
 
     async registerEmailResending(email: string,): Promise<boolean> {
@@ -135,6 +161,10 @@ export class UsersService {
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
         return this.usersRepository.confirmUser(code)
+    }
+
+    async checkRefreshTokenValidity(refreshToken: string,): Promise<IUser | null> {
+        return await this.usersRepository.findUserByRefreshToken(refreshToken)
     }
 }
 

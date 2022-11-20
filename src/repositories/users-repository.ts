@@ -1,4 +1,4 @@
-import {UsersModel} from "./db";
+import {TokensBlacklistModel, UsersModel} from "./db";
 import {FindConditionsPostsObjType} from "../domain/posts-service";
 import {IReturnedFindObj} from "./blogs-repository";
 import {ObjectId, WithId} from "mongodb";
@@ -87,6 +87,32 @@ export class UsersRepository {
         return user
     }
 
+    async findUserByRefreshToken(refreshToken: string): Promise<IUser | null> {
+        const user = await UsersModel.findOne({'accountData.refreshToken': refreshToken})
+        return user
+    }
+
+    async addTokensToBlackList(user: IUser): Promise<boolean> {
+        await TokensBlacklistModel.findOneAndUpdate({'data': 'refreshTokensBlackList'}, {$push: {'data': user.accountData.refreshToken}}, function (error: string) {
+            if (error) {
+                return false
+            }
+        })
+        await TokensBlacklistModel.findOneAndUpdate({'data': 'accessTokensBlackList'}, {$push: {'data': user.accountData.accessToken}}, function (error: string) {
+            if (error) {
+                return false
+            }
+        })
+        return true
+    }
+    async deleteUserTokens(user: IUser): Promise<boolean> {
+        const result: { matchedCount: number } = await UsersModel.updateOne({'_id': user._id},
+            {
+                $set: {'accountData.accessToken': '', 'accountData.refreshToken': ''}
+            })
+        return result.matchedCount === 1
+    }
+
     async confirmUser(code: string): Promise<boolean> {
         const result: { matchedCount: number } = await UsersModel.updateOne({'emailConfirmation.confirmationCode': code},
             {
@@ -94,6 +120,7 @@ export class UsersRepository {
             })
         return result.matchedCount === 1
     }
+
     async updateUserEmailConfirmation(id: ObjectId, emailConfirmationCode: string): Promise<boolean> {
         const result: { matchedCount: number } = await UsersModel.updateOne({id},
             {

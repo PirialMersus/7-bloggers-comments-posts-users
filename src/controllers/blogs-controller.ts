@@ -13,10 +13,12 @@ const serializedBlogsSortBy = (value: string) => {
     switch (value) {
         case 'name':
             return 'name';
-        case 'youtubeUrl':
-            return 'youtubeUrl'
+        case 'websiteUrl':
+            return 'websiteUrl'
         case '_id':
             return '_id'
+        case 'description':
+            return 'description'
         default:
             return 'createdAt'
     }
@@ -73,7 +75,7 @@ export class BlogsController {
     }
 
     async createBlog(req: Request, res: Response) {
-        const newBlog = await this.blogsService.createBlog(req.body.name, req.body.youtubeUrl)
+        const newBlog = await this.blogsService.createBlog(req.body.name, req.body.websiteUrl, req.body.description)
         if (newBlog) {
             console.log('returned blog', newBlog)
             res.status(201).send(newBlog)
@@ -100,10 +102,11 @@ export class BlogsController {
 
     async updateBlog(req: Request, res: Response) {
         const name = req.body.name;
-        const youtubeUrl = req.body.youtubeUrl;
+        const websiteUrl = req.body.websiteUrl;
         const id = req.params.id;
+        const description = req.params.description;
 
-        const isUpdated: boolean = await this.blogsService.updateBlogger(id, name, youtubeUrl)
+        const isUpdated: boolean = await this.blogsService.updateBlogger(id, name, websiteUrl, description)
         if (isUpdated) {
             const blogger = await this.blogsService.findBlogById(ObjectId.createFromHexString(id))
             res.status(204).send(blogger)

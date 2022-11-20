@@ -49,13 +49,12 @@ export class BlogsRepository {
 
     async createBlog(newBlog: IBlog): Promise<IBlog | null> {
         await BlogsModel.insertMany([newBlog])
-        console.log('newBlog', newBlog)
         return BlogsModel.findOne({_id: newBlog._id}).select({_id: 0, __v: 0})
     }
 
-    async updateBlog(id: string, name: string, youtubeUrl: string): Promise<boolean> {
+    async updateBlog(id: string, name: string, websiteUrl: string, description: string): Promise<boolean> {
         let result: { matchedCount: number } = await BlogsModel.updateOne({_id: id}, {
-            $set: {name, youtubeUrl}
+            $set: {name, websiteUrl, description}
         })
         return result.matchedCount === 1
     }

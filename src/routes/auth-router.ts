@@ -29,6 +29,9 @@ authRouter
         inputValidatorMiddleware,
         authController.registerConfirm
     )
+    .post('/refresh-token',
+        authController.refreshToken
+    )
     .post('/registration-email-resending',
         // limiter,
         body('email').trim().not().isEmpty().withMessage('enter input value in email field'),
@@ -88,10 +91,23 @@ authRouter
         authController.createUser
     )
     .post('/login',
-        body('login').trim().not().isEmpty().withMessage('enter input value in name field'),
+        body('loginOrEmail').trim().not().isEmpty().withMessage('enter input value in loginOrEmail field'),
+        body('loginOrEmail').custom(async (value, {req}) => {
+            if (value.includes('@')){
+                const regExp = new RegExp("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+                if (!regExp.test(req.body.email)) {
+                    throw new Error('enter correct value to loginOrEmail field');
+                }
+            }
+            return true;
+        }),
         body('password').trim().not().isEmpty().withMessage('enter input value in password field'),
         // limiter,
         authController.checkCredentials
+    )
+    .post('/logout',
+        // limiter,
+        authController.logout
     )
     .post('/confirm-email',
         authController.confirmEmail

@@ -38,15 +38,15 @@ export class BlogsService {
     }
     //TODO: ask why obj is so strange. How to work with this.
 
-    async createBlog(name: string, youtubeUrl: string): Promise<IBlog | null> {
+    async createBlog(name: string, websiteUrl: string, description: string): Promise<IBlog | null> {
         const date = new Date()
-        const newBlog: Blog = Blog.create(name, youtubeUrl, date)
+        const newBlog: Blog = Blog.create(name, websiteUrl, date, description)
 
         return this.blogsRepository.createBlog(newBlog)
     }
 
-    async updateBlogger(id: string, name: string, youtubeUrl: string): Promise<boolean> {
-        return this.blogsRepository.updateBlog(id, name, youtubeUrl)
+    async updateBlogger(id: string, name: string, youtubeUrl: string, description: string): Promise<boolean> {
+        return this.blogsRepository.updateBlog(id, name, youtubeUrl, description)
     }
 
     async deleteBlogger(id: string): Promise<boolean> {

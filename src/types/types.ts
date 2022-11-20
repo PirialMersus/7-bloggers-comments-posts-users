@@ -17,10 +17,11 @@ export interface IQuery {
 }
 export interface IBlog {
     name: string,
-    youtubeUrl: string,
+    websiteUrl: string,
     createdAt: string
     id: ObjectId
     _id?: ObjectId
+    description: string
 }
 export interface IPost {
     blogId: string,
@@ -60,6 +61,10 @@ export interface IComment {
     createdAt: string,
     userLogin: string,
     postId: ObjectId,
+}
+export type ITokensBlackList = {
+    data: 'refreshTokensBlackList' | 'accessTokensBlackList',
+    tokens: string[]
 }
 
 export interface IPassword {

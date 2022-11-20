@@ -1,5 +1,14 @@
 import {MongoClient, ObjectId} from 'mongodb'
-import {AccountDataType, EmailConfirmationType, IBlog, IComment, IPassword, IPost, IUser} from "../types/types";
+import {
+    AccountDataType,
+    EmailConfirmationType,
+    IBlog,
+    IComment,
+    IPassword,
+    IPost,
+    ITokensBlackList,
+    IUser
+} from "../types/types";
 import mongoose from "mongoose";
 import {v4 as uuidv4} from 'uuid';
 import add from 'date-fns/add';
@@ -10,14 +19,14 @@ export class Blog implements IBlog {
     _id: ObjectId
     id: ObjectId
 
-    private constructor(public name: string, public youtubeUrl: string, date: Date) {
+    private constructor(public name: string, public websiteUrl: string, date: Date, public description: string) {
         this.createdAt = date.toISOString()
         this._id = new ObjectId()
         this.id = this._id
     }
 
-    static create = (name: string, youtubeUrl: string, date: Date) => {
-        return new Blog(name, youtubeUrl, date)
+    static create = (name: string, websiteUrl: string, date: Date, description: string) => {
+        return new Blog(name, websiteUrl, date, description)
     }
 }
 
@@ -164,9 +173,10 @@ export const UsersModel = mongoose.model('users', usersSchema)
 
 const blogsSchema = new mongoose.Schema<IBlog>({
     name: String,
-    youtubeUrl: String,
+    websiteUrl: String,
     _id: String,
     createdAt: String,
+    description: String,
     id: String
 });
 export const BlogsModel = mongoose.model('blogs', blogsSchema)
@@ -194,6 +204,11 @@ const commentsSchema = new mongoose.Schema<IComment>({
     createdAt: String
 });
 export const CommentsModel = mongoose.model('comments', commentsSchema)
+const tokensBlackListSchema = new mongoose.Schema<ITokensBlackList>({
+    data: String,
+    tokens: [String],
+});
+export const TokensBlacklistModel = mongoose.model('tokensBlackList', tokensBlackListSchema)
 
 
 export async function runDb() {
