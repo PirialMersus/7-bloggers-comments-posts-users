@@ -17,7 +17,7 @@ export class AuthController {
                 .cookie('refreshToken', result.refreshToken, {
                     secure: true,
                     httpOnly: true,
-                    expires: add(new Date, {seconds: 23}),
+                    expires: add(new Date, {seconds: 21}),
                 })
                 .status(200)
                 .send({
@@ -35,6 +35,12 @@ export class AuthController {
         const refreshTokenFromCookies = req.cookies.refreshToken
         const user: IUser | null = await this.usersService.findUserByRefreshToken(refreshTokenFromCookies)
         if (!user) {
+            res.sendStatus(401)
+            return
+        }
+        const refreshTokenValidity: boolean = await this.usersService.checkRefreshTokenValidity(refreshTokenFromCookies, user._id)
+
+        if (!refreshTokenValidity) {
             res.sendStatus(401)
         }
         const isUserLogout = await this.usersService.logout(user!)
@@ -75,15 +81,16 @@ export class AuthController {
     }
     refreshToken = async (req: Request, res: Response) => {
         const refreshTokenFromCookies = req.cookies.refreshToken
-        const user: IUser | null = await this.usersService.checkRefreshTokenValidity(refreshTokenFromCookies)
+        if (!refreshTokenFromCookies) res.sendStatus(401)
+        const user: IUser | null = await this.usersService.findUserByRefreshToken(refreshTokenFromCookies)
         if (user) {
-            const tokens: { accessToken: string, refreshToken: string } | null = await this.usersService.generateAccessAndRefreshToken(user._id)
+            const tokens: { accessToken: string, refreshToken: string } | null = await this.usersService.generateAccessAndRefreshToken(user)
             if (tokens) {
                 res
                     .cookie('refreshToken', tokens.refreshToken, {
                         secure: true,
                         httpOnly: true,
-                        expires: add(new Date, {seconds: 23}),
+                        expires: add(new Date, {seconds: 21}),
                     })
                     .status(200)
                     .send({
