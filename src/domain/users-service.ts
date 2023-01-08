@@ -87,7 +87,6 @@ export class UsersService {
         return true
     }
 
-
     async deleteUser(id: ObjectId): Promise<boolean> {
         return this.usersRepository.deleteUser(id)
     }
