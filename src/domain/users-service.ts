@@ -103,7 +103,7 @@ export class UsersService {
         if (!user) return null
         const passwordHash = await jwtService.generateHash(password, user.accountData.passwordSalt)
         if (user.accountData.passwordHash !== passwordHash) return null
-        return this.generateAccessAndRefreshToken(user)
+        return this.generateAccessAndRefreshToken(user._id)
         // const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '10s'})
         // const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '20s'})
         // if (await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken)) {
@@ -112,13 +112,11 @@ export class UsersService {
         // return null
     }
 
-    generateAccessAndRefreshToken = async (user: User): Promise<{ accessToken: string, refreshToken: string } | null> => {
+    generateAccessAndRefreshToken = async (userId: ObjectId): Promise<{ accessToken: string, refreshToken: string } | null> => {
 
-        const accessToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '11s'})
-        const refreshToken = jwt.sign({userId: user._id}, settings.JWT_SECRET, {expiresIn: '21s'})
-        const isOldRefreshTokenAddToInvalidatesArr = await this.usersRepository.addInvalidateRefreshTokenToUser(user)
-        const isTokensAddedToUser = await this.usersRepository.addRefreshAndAccessTokensToUser(user._id, accessToken, refreshToken)
-        if (isTokensAddedToUser && isOldRefreshTokenAddToInvalidatesArr) {
+        const accessToken = jwt.sign({userId: userId}, settings.JWT_SECRET, {expiresIn: '10s'})
+        const refreshToken = jwt.sign({userId: userId}, settings.JWT_SECRET, {expiresIn: '20s'})
+        if (await this.usersRepository.addRefreshAndAccessTokensToUser(userId, accessToken, refreshToken)) {
             return {accessToken, refreshToken}
         }
         return null
@@ -127,21 +125,15 @@ export class UsersService {
     async findUserByEmail(email: string,): Promise<IUser | null> {
         return this.usersRepository.findUserByEmail(email)
     }
-
     async findUserByRefreshToken(token: string,): Promise<IUser | null> {
         return this.usersRepository.findUserByRefreshToken(token)
     }
-
-    async checkRefreshTokenValidity(token: string, userId: ObjectId): Promise<boolean> {
-        return this.usersRepository.checkRefreshTokenValidity(token, userId)
-    }
-
     async logout(user: IUser,): Promise<boolean | null> {
         const isTokensAddedToBlackList = await this.usersRepository.addTokensToBlackList(user)
-        if (!isTokensAddedToBlackList) {
+        if (!isTokensAddedToBlackList){
             return null
         }
-        return this.usersRepository.deleteUserTokens(user!)
+       return this.usersRepository.deleteUserTokens(user!)
     }
 
     async registerEmailResending(email: string,): Promise<boolean> {
@@ -169,6 +161,10 @@ export class UsersService {
         if (user.emailConfirmation.confirmationCode !== code) return false
         if (user.emailConfirmation.expirationDate < new Date()) return false
         return this.usersRepository.confirmUser(code)
+    }
+
+    async checkRefreshTokenValidity(refreshToken: string,): Promise<IUser | null> {
+        return await this.usersRepository.findUserByRefreshToken(refreshToken)
     }
 }
 

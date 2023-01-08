@@ -1,4 +1,4 @@
-import {TokensBlacklistModel, User, UsersModel} from "./db";
+import {TokensBlacklistModel, UsersModel} from "./db";
 import {FindConditionsPostsObjType} from "../domain/posts-service";
 import {IReturnedFindObj} from "./blogs-repository";
 import {ObjectId, WithId} from "mongodb";
@@ -50,11 +50,21 @@ export class UsersRepository {
     }
 
     async findUserByEmail(email: string): Promise<IUser | null> {
-        return UsersModel.findOne({'accountData.email': email}).select({_id: 0, __v: 0})
+        let user = UsersModel.findOne({'accountData.email': email}).select({_id: 0, __v: 0})
+        if (user) {
+            return user
+        } else {
+            return null
+        }
     }
 
     async findUserByLogin(login: string): Promise<IUser | null> {
-        return UsersModel.findOne({'accountData.login': login}).select({__v: 0})
+        let user = UsersModel.findOne({'accountData.login': login}).select({__v: 0})
+        if (user) {
+            return user
+        } else {
+            return null
+        }
     }
 
     async createUser(newUser: IUser): Promise<IUser | null> {
@@ -73,15 +83,13 @@ export class UsersRepository {
     }
 
     async findUserByConfirmationCode(code: string): Promise<IUser | null> {
-        return UsersModel.findOne({'emailConfirmation.confirmationCode': code})
+        const user = await UsersModel.findOne({'emailConfirmation.confirmationCode': code})
+        return user
     }
 
     async findUserByRefreshToken(refreshToken: string): Promise<IUser | null> {
-        return UsersModel.findOne({'accountData.refreshToken': refreshToken})
-    }
-
-    async checkRefreshTokenValidity(refreshToken: string, userId: ObjectId): Promise<boolean> {
-        return !await UsersModel.find({$and: [{'accountData.invalidateRefreshTokens': {$in: refreshToken}}, {_id: userId}]})
+        const user = await UsersModel.findOne({'accountData.refreshToken': refreshToken})
+        return user
     }
 
     async addTokensToBlackList(user: IUser): Promise<boolean> {
@@ -97,7 +105,6 @@ export class UsersRepository {
         })
         return true
     }
-
     async deleteUserTokens(user: IUser): Promise<boolean> {
         const result: { matchedCount: number } = await UsersModel.updateOne({'_id': user._id},
             {
@@ -130,13 +137,6 @@ export class UsersRepository {
     async addRefreshAndAccessTokensToUser(_id: ObjectId, accessToken: string, refreshToken: string): Promise<Boolean> {
         let result: { matchedCount: number } = await UsersModel.updateOne({_id}, {
             $set: {'accountData.accessToken': accessToken, 'accountData.refreshToken': refreshToken,}
-        })
-        return result.matchedCount === 1
-    }
-
-    async addInvalidateRefreshTokenToUser(user: User): Promise<Boolean> {
-        let result: { matchedCount: number } = await UsersModel.updateOne({_id: user._id}, {
-            $addToSet: {'accountData.invalidateRefreshTokens': user.accountData.refreshToken}
         })
         return result.matchedCount === 1
     }

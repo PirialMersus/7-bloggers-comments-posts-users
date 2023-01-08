@@ -52,7 +52,6 @@ export interface IUser {
     id: ObjectId,
     accountData: AccountDataType,
     emailConfirmation: EmailConfirmationType
-    invalidateRefreshTokens: string[]
 }
 export interface IComment {
     _id: ObjectId,
