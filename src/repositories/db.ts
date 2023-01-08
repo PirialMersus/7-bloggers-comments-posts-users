@@ -95,6 +95,7 @@ export class User implements IUser {
     static date: Date
     accountData: AccountDataType
     emailConfirmation: EmailConfirmationType
+    invalidateRefreshTokens: string[]
     static login: string
     static email: string
     static passwordSalt: string
@@ -117,6 +118,7 @@ export class User implements IUser {
             accessToken: '',
             refreshToken: '',
         }
+        this.invalidateRefreshTokens = []
         this.emailConfirmation = {
             confirmationCode: uuidv4(),
             expirationDate: add(date, {hours: 10, minutes: 3}),
@@ -167,7 +169,8 @@ const usersSchema = new mongoose.Schema<IUser>({
         confirmationCode: String,
         expirationDate: Date,
         isConfirmed: Boolean,
-    }
+    },
+    invalidateRefreshTokens: [String]
 });
 export const UsersModel = mongoose.model('users', usersSchema)
 
