@@ -6,6 +6,7 @@ export const emailRouter = Router({})
 emailRouter
     .post('/send',
         // authMiddleware,
+
         // body('login').trim().not().isEmpty().withMessage('enter input value in name field'),
         // body('password').trim().not().isEmpty().withMessage('enter input value in password field'),
         // body('login').isLength({max: 10, min: 3}).withMessage('login: maxLength: 10 minLength: 3'),
